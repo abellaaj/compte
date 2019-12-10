@@ -1,26 +1,28 @@
 pipeline {
-agent any
-stages {
-stage ('Compile Stage') {
-steps {
-maven(name : 'maven3') {
-bat'mvn clean compile'
-}
-}
-}
-stage ('Testing Stage') {
-steps {
-maven(name : 'maven3') {
-bat'mvn test'
-}
-}
-}
-stage ('Install Stage') {
-steps {
-maven(name : 'maven3') {
-bat'mvn install'
-}
-}
-}
-}
+
+    agent any
+    tools {
+        maven 'maven 3' 
+    }
+    stages {
+        stage('Compile stage') {
+            steps {
+                bat "mvn clean compile" 
+        }
+    }
+
+         stage('testing stage') {
+             steps {
+                bat "mvn test"
+        }
+    }
+
+          stage('deployment stage') {
+              steps {
+                bat "mvn deploy"
+        }
+    }
+
+  }
+
 }
