@@ -1,4 +1,4 @@
-#S2I - local
+# S2I - local
 
 ## il y a un moyen pour faire le s2i en local sans passer par openshift ci dessous l'install:
 https://github.com/openshift/source-to-image/releases
