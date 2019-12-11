@@ -1,96 +1,39 @@
-# compte
-This application was generated using JHipster 5.2.1, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v5.2.1](https://www.jhipster.tech/documentation-archive/v5.2.1).
+#S2I - local
 
-This is a "microservice" application intended to be part of a microservice architecture, please refer to the [Doing microservices with JHipster][] page of the documentation for more information.
+## il y a un moyen pour faire le s2i en local sans passer par openshift ci dessous l'install:
+https://github.com/openshift/source-to-image/releases
+## pour lancer le s2i en local sur un repo git on lance la commande suivante:
 
-This application is configured for Service Discovery and Configuration with the JHipster-Registry. On launch, it will refuse to start if it is not able to connect to the JHipster-Registry at [http://localhost:8761](http://localhost:8761). For more information, read our documentation on [Service Discovery and Configuration with the JHipster-Registry][].
+		./s2i build  [repo-projet] [image s2i] [nom de l'imag à générer]
 
-## Development
+		./s2i build https://github.com/abellaaj/compte registry.redhat.io/redhat-openjdk-18/openjdk18-openshift toto
 
-To start your application in the dev profile, simply run:
+### si on a deja clonner notre projet on peut lancer le s2i comme ça:
 
-    ./mvnw
+    ./s2i build ~/git/compte  registry.redhat.io/redhat-openjdk-18/openjdk18-openshift toto
 
+### pour s'assurer que tout va bien on lance la commande docker ps et on tombe sur notre image "toto"
+### dans le contexte de bpce l'image s2i n'arrive pas à compiler le code de mom projet compte ce qui nous a obliger à :
+ - créer un fichier "configuration" à la racin du projet compte
+ - déposer le setting.xml de mon environement dans cerépertoire
+ - surtout il faut pas oublier de commiter cet modif pour que s2i prend en compte cette configuration
 
-For further instructions on how to develop with JHipster, have a look at [Using JHipster in development][].
+#S2I - OpenShift (regarder src/main/s2i)
 
+on s'est basé sur l'exemple suivant:
+https://github.com/jboss-container-images/openjdk/tree/develop/templates
 
-### Doing API-First development using openapi-generator
+## si on veut appliquer des param sur un template on lance
 
-[OpenAPI-Generator]() is configured for this application. You can generate API code from the `src/main/resources/swagger/api.yml` definition file by running:
-```bash
-./mvnw generate-sources
-```
-Then implements the generated delegate classes with `@Service` classes.
+		oc process -f [template] [param=value] [param=value] ... => on aura le resultat dans la sortie standart
 
-To edit the `api.yml` definition file, you can use a tool such as [Swagger-Editor](). Start a local instance of the swagger-editor using docker by running: `docker-compose -f src/main/docker/swagger-editor.yml up -d`. The editor will then be reachable at [http://localhost:7742](http://localhost:7742).
+exemple:
 
-Refer to [Doing API-First development][] for more details.
+		oc process -f openjdk-web-basic-s2i.json APPLICATION_NAME=toto
 
-## Building for production
+## si on veux que la sortie du process sera aplliquer directement sur openshift :
 
-To optimize the compte application for production, run:
-
-    ./mvnw -Pprod clean package
-
-To ensure everything worked, run:
-
-    java -jar target/*.war
+	oc process -f openjdk-web-basic-s2i.json APPLICATION_NAME=toto  | oc apply -f -
 
 
-Refer to [Using JHipster in production][] for more details.
 
-## Testing
-
-To launch your application's tests, run:
-
-    ./mvnw clean test
-### Other tests
-
-Performance tests are run by [Gatling][] and written in Scala. They're located in [src/test/gatling](src/test/gatling).
-
-To use those tests, you must install Gatling from [https://gatling.io/](https://gatling.io/).
-
-For more information, refer to the [Running tests page][].
-
-## Using Docker to simplify development (optional)
-
-You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
-
-For example, to start a mongodb database in a docker container, run:
-
-    docker-compose -f src/main/docker/mongodb.yml up -d
-
-To stop it and remove the container, run:
-
-    docker-compose -f src/main/docker/mongodb.yml down
-
-You can also fully dockerize your application and all the services that it depends on.
-To achieve this, first build a docker image of your app by running:
-
-    ./mvnw verify -Pprod dockerfile:build dockerfile:tag@version dockerfile:tag@commit
-
-Then run:
-
-    docker-compose -f src/main/docker/app.yml up -d
-
-For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
-
-## Continuous Integration (optional)
-
-To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
-
-[JHipster Homepage and latest documentation]: https://www.jhipster.tech
-[JHipster 5.2.1 archive]: https://www.jhipster.tech/documentation-archive/v5.2.1
-[Doing microservices with JHipster]: https://www.jhipster.tech/documentation-archive/v5.2.1/microservices-architecture/
-[Using JHipster in development]: https://www.jhipster.tech/documentation-archive/v5.2.1/development/
-[Service Discovery and Configuration with the JHipster-Registry]: https://www.jhipster.tech/documentation-archive/v5.2.1/microservices-architecture/#jhipster-registry
-[Using Docker and Docker-Compose]: https://www.jhipster.tech/documentation-archive/v5.2.1/docker-compose
-[Using JHipster in production]: https://www.jhipster.tech/documentation-archive/v5.2.1/production/
-[Running tests page]: https://www.jhipster.tech/documentation-archive/v5.2.1/running-tests/
-[Setting up Continuous Integration]: https://www.jhipster.tech/documentation-archive/v5.2.1/setting-up-ci/
-
-[Gatling]: http://gatling.io/
-[OpenAPI-Generator]: https://openapi-generator.tech
-[Swagger-Editor]: http://editor.swagger.io
-[Doing API-First development]: https://www.jhipster.tech/documentation-archive/v5.2.1/doing-api-first-development/
