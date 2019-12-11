@@ -20,6 +20,7 @@ pipeline {
           stage('deployment stage') {
               steps {
                 sh "mvn install"
+                echo "FIN"  
         }
     }
 
