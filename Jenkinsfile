@@ -5,6 +5,11 @@ pipeline {
         maven 'maven3' 
     }
     stages {
+        stage('scm') {
+				steps {
+					checkout([$class: 'GitSCM', branches: scm.branches, doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: scm.userRemoteConfigs])
+				}
+			}
         stage('Compile stage') {
             steps {
                 sh "mvn clean compile" 
